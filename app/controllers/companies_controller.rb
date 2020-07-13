@@ -14,6 +14,7 @@ class CompaniesController < ApplicationController
 
   def create
     @company = Company.new(company_params)
+    @company.update(city: ZipCodes.identify(@company.zip_code)[:city], state: ZipCodes.identify(@company.zip_code)[:state_code])
     if @company.save
       redirect_to companies_path, notice: "Saved"
     else
@@ -25,12 +26,20 @@ class CompaniesController < ApplicationController
   end
 
   def update
-    if @company.update(company_params)
+    if @company.update(company_params) && @company.update(city: ZipCodes.identify(@company.zip_code)[:city], state: ZipCodes.identify(@company.zip_code)[:state_code])
       redirect_to companies_path, notice: "Changes Saved"
     else
       render :edit
     end
-  end  
+  end
+
+  def destroy
+    @company.destroy
+    respond_to do |format|
+      format.html { redirect_to companies_path, notice: 'Company is successfully destroyed.' }
+      format.json { head :no_content }
+    end
+  end
 
   private
 
@@ -49,5 +58,6 @@ class CompaniesController < ApplicationController
   def set_company
     @company = Company.find(params[:id])
   end
-  
+
+
 end

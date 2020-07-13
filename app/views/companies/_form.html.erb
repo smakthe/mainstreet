@@ -1,5 +1,8 @@
 <div class="py-5">
   <%= form_for @company do |f| %>
+    <% if @company.errors.any? %>
+      <% flash.alert = "Email should belong to getmainstreet.com domain" %>
+    <% end %>
 
     <div class="row my-lg-3">
       <div class="col-lg-3">
